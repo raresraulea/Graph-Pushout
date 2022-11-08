@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Pushout
+{
+    public abstract class PushoutAbstract<T1, T2>
+    {
+        public abstract HashSet<T2> getPushout(functie<T1, T2> fi, HashSet<T2> codomfi,
+        functie<T1, T2> gi, HashSet<T2> codomgi, HashSet<T1> domi);
+    }
+}

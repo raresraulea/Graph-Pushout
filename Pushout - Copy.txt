@@ -1,0 +1,153 @@
+﻿using Microsoft.VisualBasic;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Pushout
+{
+    public class Pushout<T1, T2> : PushoutAbstract<T1, T2>
+    {
+
+        public int findFirstEmptyIndex(int[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] == 0) return i;
+            }
+
+            Console.WriteLine("Nu am gasit index gol in: ");
+            for (int i = 0; i < array.Length; i++)
+            {
+                Console.Write(array[i] + " ");
+            }
+            Console.WriteLine();
+            return -1;
+        }
+
+        public int findFirstMinusOneIndex(int[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] == -1) return i;
+            }
+            Console.WriteLine();
+            return -1;
+        }
+
+        public bool hasEquivalnce(int[] partitionArray, int emptyIndex, int[,] matrix)
+        {
+            for (int i = 0; i < partitionArray.Length; i++)
+            {
+                if (matrix[emptyIndex, i] != 0 && i != emptyIndex)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        public void displayArray(int[] partitionArray)
+        {
+            Console.WriteLine();
+            for (var i = 0; i < partitionArray.Length; i++)
+            {
+                Console.Write(partitionArray[i] + " ");
+            }
+            Console.WriteLine();
+        }
+
+        public int writeEquivalences(int emptyIndex, ref int[] partitionArray, int[,] matrix, int currentPartition)
+        {
+            Console.WriteLine("Writing equivalences for index: {0}", emptyIndex);
+            partitionArray[emptyIndex] = currentPartition;
+
+            if (hasEquivalnce(partitionArray, emptyIndex, matrix) == false) return -1;
+
+            for (int i = 0; i < partitionArray.Length; i++)
+            {
+                if (matrix[emptyIndex, i] != 0 && i != emptyIndex && partitionArray[i] == 0)
+                {
+                    Console.WriteLine("Echivalenta gasita intre {0} si {1}.", emptyIndex, i);
+                    partitionArray[i] = -1;
+                }
+            }
+
+            for (int i = 0; i < partitionArray.Length; i++)
+            {
+                if (partitionArray[i] == -1)
+                {
+                    writeEquivalences(i, ref partitionArray, matrix, currentPartition);
+                }
+            }
+            return -1;
+        }
+
+        public override HashSet<T2> getPushout(functie<T1, T2> fi, HashSet<T2> codomfi, functie<T1, T2> gi, HashSet<T2> codomgi, HashSet<T1> domi)
+        {
+            Console.WriteLine("get pushout");
+            var matrixLength = codomfi.Count + codomgi.Count;
+            int[,] matrix = new int[matrixLength, matrixLength];
+
+            var concatDomains = new HashSet<T2>(codomfi.Union(codomgi));
+            var stringList = concatDomains.ToList();
+
+            for (var i = 0; i < matrixLength; i++)
+            {
+                matrix[i, i] = 1;
+            }
+
+            foreach (var value in domi)
+            {
+                var fiResult = fi.Calcul(value);
+                var giResult = gi.Calcul(value);
+                var fiIndex = stringList.IndexOf(fiResult);
+                var giIndex = stringList.IndexOf(giResult);
+
+                if (fiResult == null || giResult == null) return new HashSet<T2>();
+
+                matrix[fiIndex, giIndex] = 1;
+                matrix[giIndex, fiIndex] = 1;
+            }
+
+
+            int[] partitionArray = Enumerable.Repeat(0, concatDomains.Count).ToArray();
+            int currentPartition = 1;
+            int emptyIndex = 0;
+
+            while (emptyIndex != -1)
+            {
+                for (var i = 0; i < matrixLength; i++)
+                {
+                    Console.Write(partitionArray[i] + " ");
+                }
+                Console.WriteLine();
+
+                writeEquivalences(emptyIndex, ref partitionArray, matrix, currentPartition);
+
+                // PAS4: cauta element nou si incrementeaza partitita
+                currentPartition++;
+                emptyIndex = findFirstEmptyIndex(partitionArray);
+            }
+
+            List<int> alreadyFound = new List<int>();
+            IEnumerable<int> uniqueNumbers = partitionArray.Distinct();
+
+
+            Console.WriteLine();
+            for (var i = 0; i < matrixLength; i++)
+            {
+                for (var j = 0; j < matrixLength; j++)
+                {
+                    Console.Write(matrix[i, j] + " ");
+                }
+                Console.WriteLine();
+            }
+            return new HashSet<T2>();
+        }
+    }
+}
