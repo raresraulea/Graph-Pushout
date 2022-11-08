@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Pushout
+{
+    public static class MyExtensionMethods
+    {
+        public static HashSet<T2> Pushout<T1, T2>(
+            this HashSet<T1> domeniu, 
+            IEnumerable<T2> codomeniu1, 
+            IEnumerable<T2> codomeniu2, 
+            functie<T1, T2> fi, 
+            functie<T1, T2> gi
+        )
+        {
+
+            var domi = new HashSet<string> { "w1", "w2", "w3", "w4" };
+
+            var codomfi = new HashSet<T2>(codomeniu1);
+            var codomgi = new HashSet<T2>(codomeniu2);
+
+            var pushout = new Pushout<T1, T2>();
+            pushout.getPushout(fi, codomfi, gi, codomgi, domeniu);
+
+            return new HashSet<T2>();
+        }
+    }
+}
