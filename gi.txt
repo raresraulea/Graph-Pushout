@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Pushout
+{
+    public class gi : functie<string, string>
+    {
+        public string Calcul(string intrare)
+        {
+            Console.WriteLine("calcul gi");
+            switch (intrare)
+            {
+                case "w1":
+                    return "y1";
+                case "w2":
+                    return "y2";
+                case "w3":
+                    return "y2";
+                case "w4":
+                    return "y2";
+                default:
+                    return "";
+            }
+        }
+    }
+}
